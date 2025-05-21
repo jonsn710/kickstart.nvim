@@ -180,6 +180,9 @@ vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { desc = '[B]uffer [P]reviou
 vim.keymap.set('n', '<leader>bd', ':bdelete<CR>', { desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>bD', ':%bd<CR>', { desc = 'Close [A]ll [B]uffers' })
 
+vim.keymap.set('n', '<leader>be', ':enew<CR>', { desc = '[B]uffer [E]mpty new' })
+vim.keymap.set('n', '<leader>br', ':e#<CR>', { desc = '[B]uffer [R]ecent' })
+
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 --

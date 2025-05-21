@@ -20,6 +20,8 @@ return {
         position = 'left',
         mappings = {
           ['\\'] = 'close_window',
+          ['o'] = 'open',
+          ['<space>'] = 'none',
         },
       },
       default_component_configs = {
