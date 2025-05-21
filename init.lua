@@ -169,8 +169,8 @@ vim.opt.confirm = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open [D]iagnostic float' })
+vim.keymap.set('n', '<leader>df', vim.diagnostic.open_float, { desc = '[D]iagnostic [F]loat' })
+vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = '[D]iagnostic [Q]uickfix' })
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -199,9 +199,24 @@ end, { desc = 'Open [T]erminal in current file directory' })
 -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 -- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', 'gp', '{', { desc = 'Jump to start of paragraph' })
+
+-- Jump to end of paragraph
+vim.keymap.set('n', 'gP', '}', { desc = 'Jump to end of paragraph' })
+
+-- Jump to start of code block
+vim.keymap.set('n', 'gb', '[{', { desc = 'Jump to start of code block' })
+
+-- Jump to end of code block
+vim.keymap.set('n', 'gB', ']}', { desc = 'Jump to end of code block' })
+
+-- Jump to matching HTML/XML tag
+vim.keymap.set('n', 'gt', '%', { desc = 'Jump to matching tag/bracket' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
+vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true, desc = 'Delete character without copying' })
+vim.keymap.set('v', 'x', '"_x', { noremap = true, silent = true, desc = 'Delete selection without copying' })
 --
 -- focus Neotree from everywhere
 vim.keymap.set('n', '<leader>e', ':Neotree focus<CR>', { desc = 'Focus file [E]xplorer' })
@@ -354,8 +369,9 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>d', group = '[D]iagnostics' },
+        { '<leader>b', group = '[B]uffer' },
+        { '<leader>t', group = '[T]erminal' },
       },
     },
   },
@@ -627,11 +643,6 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-            map('<leader>th', function()
-              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
-          end
         end,
       })
 

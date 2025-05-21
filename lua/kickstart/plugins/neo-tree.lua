@@ -16,8 +16,15 @@ return {
   opts = {
     filesystem = {
       window = {
+        width = 30,
+        position = 'left',
         mappings = {
           ['\\'] = 'close_window',
+        },
+      },
+      default_component_configs = {
+        indent = {
+          padding = 0, -- Reduce left padding to save more space
         },
       },
     },
