@@ -190,13 +190,17 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 
 -- open terminal in split with the same directory as the current file
 vim.keymap.set('n', '<leader>tt', function()
-  -- Split window
-  vim.cmd 'vsplit'
-  -- Open terminal in the directory of the current file
-  vim.cmd('terminal cd ' .. vim.fn.expand '%:p:h' .. ' && $SHELL')
-  -- Optional: Enter insert mode automatically
+  -- Get the directory of the current buffer
+  local current_dir = vim.fn.expand '%:p:h'
+  -- If current buffer has no file, use current working directory
+  if current_dir == '' then
+    current_dir = vim.fn.getcwd()
+  end
+  -- Create new buffer and open terminal in it
+  vim.cmd 'enew'
+  vim.cmd('terminal cd ' .. current_dir .. ' && $SHELL')
   vim.cmd 'startinsert'
-end, { desc = 'Open [T]erminal in current file directory' })
+end, { desc = 'Open [T]erminal in buffer' })
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -221,8 +225,6 @@ vim.keymap.set('n', 'gt', '%', { desc = 'Jump to matching tag/bracket' })
 vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true, desc = 'Delete character without copying' })
 vim.keymap.set('v', 'x', '"_x', { noremap = true, silent = true, desc = 'Delete selection without copying' })
 --
--- focus Neotree from everywhere
-vim.keymap.set('n', '<leader>e', ':Neotree focus<CR>', { desc = 'Focus file [E]xplorer' })
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -246,6 +248,18 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank()
+  end,
+})
+
+-- Auto-create directories when saving files
+vim.api.nvim_create_autocmd('BufWritePre', {
+  group = vim.api.nvim_create_augroup('auto_create_dir', { clear = true }),
+  callback = function(event)
+    if event.match:match '^%w%w+:[\\/][\\/]' then
+      return
+    end
+    local file = vim.uv.fs_realpath(event.match) or event.match
+    vim.fn.mkdir(vim.fn.fnamemodify(file, ':p:h'), 'p')
   end,
 })
 
@@ -877,7 +891,6 @@ require('lazy').setup({
 
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
-        preselect = 'item', -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
       },
 
@@ -1010,14 +1023,14 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.neo-tree',
+  -- require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  { import = 'custom.plugins' },
+  --{ import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
