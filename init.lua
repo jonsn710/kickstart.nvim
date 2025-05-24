@@ -179,52 +179,33 @@ vim.keymap.set('n', '<leader>bn', ':bnext<CR>', { desc = '[B]uffer [N]ext' })
 vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { desc = '[B]uffer [P]revious' })
 vim.keymap.set('n', '<leader>bd', ':bdelete<CR>', { desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>bD', ':%bd<CR>', { desc = 'Close [A]ll [B]uffers' })
-
 vim.keymap.set('n', '<leader>be', ':enew<CR>', { desc = '[B]uffer [E]mpty new' })
-vim.keymap.set('n', '<leader>br', ':e#<CR>', { desc = '[B]uffer [R]ecent' })
+
+vim.keymap.set('n', '<leader>th', function()
+  vim.cmd 'enew'
+  vim.cmd 'terminal cd ~ && $SHELL'
+  vim.cmd 'startinsert'
+end, { desc = '[T]erminal in [H]ome' })
+
+vim.keymap.set('n', '<leader>tt', function()
+  local current_dir = vim.fn.expand '%:p:h'
+  if current_dir == '' then
+    current_dir = vim.fn.getcwd()
+  end
+  vim.cmd 'enew'
+  vim.cmd('terminal cd ' .. current_dir .. ' && $SHELL')
+  vim.cmd 'startinsert'
+end, { desc = 'Open [T]erminal in buffer' })
 
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 --
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- open terminal in split with the same directory as the current file
-vim.keymap.set('n', '<leader>tt', function()
-  -- Get the directory of the current buffer
-  local current_dir = vim.fn.expand '%:p:h'
-  -- If current buffer has no file, use current working directory
-  if current_dir == '' then
-    current_dir = vim.fn.getcwd()
-  end
-  -- Create new buffer and open terminal in it
-  vim.cmd 'enew'
-  vim.cmd('terminal cd ' .. current_dir .. ' && $SHELL')
-  vim.cmd 'startinsert'
-end, { desc = 'Open [T]erminal in buffer' })
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-vim.keymap.set('n', 'gp', '{', { desc = 'Jump to start of paragraph' })
-
--- Jump to end of paragraph
-vim.keymap.set('n', 'gP', '}', { desc = 'Jump to end of paragraph' })
-
--- Jump to start of code block
-vim.keymap.set('n', 'gb', '[{', { desc = 'Jump to start of code block' })
-
--- Jump to end of code block
-vim.keymap.set('n', 'gB', ']}', { desc = 'Jump to end of code block' })
-
--- Jump to matching HTML/XML tag
-vim.keymap.set('n', 'gt', '%', { desc = 'Jump to matching tag/bracket' })
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
 vim.keymap.set('n', 'x', '"_x', { noremap = true, silent = true, desc = 'Delete character without copying' })
 vim.keymap.set('v', 'x', '"_x', { noremap = true, silent = true, desc = 'Delete selection without copying' })
---
+
+--  Use CTRL+<hjkl> to switch between windows
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -470,14 +451,23 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>sc', function()
+        local current_dir = vim.fn.expand '%:p:h'
+        if current_dir == '' then
+          current_dir = vim.fn.getcwd()
+        end
+
+        require('telescope.builtin').find_files {
+          prompt_title = 'Files in ' .. vim.fn.fnamemodify(current_dir, ':t'),
+          cwd = current_dir,
+        }
+      end, { desc = '[S]earch [C]urrent directory' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
