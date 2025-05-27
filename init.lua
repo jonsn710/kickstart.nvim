@@ -168,6 +168,8 @@ vim.opt.confirm = true
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+vim.api.nvim_set_keymap('i', 'jk', '<Esc>', { noremap = false })
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>df', vim.diagnostic.open_float, { desc = '[D]iagnostic [F]loat' })
 vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = '[D]iagnostic [Q]uickfix' })
@@ -904,10 +906,7 @@ require('lazy').setup({
 
       -- Shows a signature help window while you type arguments for a function
       signature = {
-        enabled = true,
-        window = {
-          close_events = { 'CursorMoved', 'CursorMovedI', 'InsertLeave' },
-        },
+        enabled = false,
       },
     },
   },
