@@ -169,6 +169,7 @@ vim.opt.confirm = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 vim.api.nvim_set_keymap('i', 'jk', '<Esc>', { noremap = false })
+vim.api.nvim_set_keymap('t', 'jk', '<Esc><Esc>', { noremap = false })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>df', vim.diagnostic.open_float, { desc = '[D]iagnostic [F]loat' })
