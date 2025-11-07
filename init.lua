@@ -404,13 +404,19 @@ require('lazy').setup({
       local capabilities = require('blink.cmp').get_lsp_capabilities()
       local servers = {
         clangd = {},
-        ts_ls = {},
-        tailwindcss = {},
+        pyright = {},
+        vtsls = {},
         html = {},
         cssls = {},
-        jdtls = {},
+        tailwindcss = {},
         jsonls = {},
-        pyright = {},
+        yamlls = {},
+        marksman = {},
+        bashls = {},
+        dockerls = {},
+        docker_compose_language_service = {},
+        ansiblels = {},
+        cmake = {},
 
         lua_ls = {
           settings = {
