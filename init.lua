@@ -62,7 +62,7 @@ vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = '[D]iagnos
 vim.keymap.set('n', '<leader>bn', ':bnext<CR>', { desc = '[B]uffer [N]ext' })
 vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { desc = '[B]uffer [P]revious' })
 vim.keymap.set('n', '<leader>bd', ':bdelete<CR>', { desc = '[B]uffer [D]elete' })
-vim.keymap.set('n', '<leader>bD', ':%bd<CR>', { desc = 'Close [A]ll [B]uffers' })
+vim.keymap.set('n', '<leader>bD', ':%bd<CR>', { desc = '[B]uffer [D]elete all' })
 vim.keymap.set('n', '<leader>be', ':enew<CR>', { desc = '[B]uffer [E]mpty new' })
 
 vim.keymap.set('n', '<leader>th', function()
@@ -231,11 +231,9 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sp', builtin.git_files, { desc = '[S]earch in Git [P]roject' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
@@ -318,10 +316,10 @@ require('lazy').setup({
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-          map('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          -- map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          -- map('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          -- map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          -- map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
