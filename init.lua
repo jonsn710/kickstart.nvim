@@ -54,32 +54,16 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.api.nvim_set_keymap('i', 'jk', '<Esc>', { noremap = false })
 vim.api.nvim_set_keymap('t', 'jk', '<Esc><Esc>', { noremap = false })
 
+vim.keymap.set('n', 'J', '25j', { noremap = true })
+vim.keymap.set('n', 'K', '25k', { noremap = true })
+
 vim.keymap.set('n', '<leader>e', vim.cmd.Ex)
 
 vim.keymap.set('n', '<leader>df', vim.diagnostic.open_float, { desc = '[D]iagnostic [F]loat' })
 vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = '[D]iagnostic [Q]uickfix' })
 
-vim.keymap.set('n', '<leader>bn', ':bnext<CR>', { desc = '[B]uffer [N]ext' })
-vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { desc = '[B]uffer [P]revious' })
 vim.keymap.set('n', '<leader>bd', ':bdelete<CR>', { desc = '[B]uffer [D]elete' })
 vim.keymap.set('n', '<leader>bD', ':%bd<CR>', { desc = '[B]uffer [D]elete all' })
-vim.keymap.set('n', '<leader>be', ':enew<CR>', { desc = '[B]uffer [E]mpty new' })
-
-vim.keymap.set('n', '<leader>th', function()
-  vim.cmd 'enew'
-  vim.cmd 'terminal cd ~ && $SHELL'
-  vim.cmd 'startinsert'
-end, { desc = '[T]erminal in [H]ome' })
-
-vim.keymap.set('n', '<leader>tt', function()
-  local current_dir = vim.fn.expand '%:p:h'
-  if current_dir == '' then
-    current_dir = vim.fn.getcwd()
-  end
-  vim.cmd 'enew'
-  vim.cmd('terminal cd ' .. current_dir .. ' && $SHELL')
-  vim.cmd 'startinsert'
-end, { desc = 'Open [T]erminal in buffer' })
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
@@ -186,7 +170,6 @@ require('lazy').setup({
         { '<leader>s', group = '[S]earch' },
         { '<leader>d', group = '[D]iagnostics' },
         { '<leader>b', group = '[B]uffer' },
-        { '<leader>t', group = '[T]erminal' },
       },
     },
   },
@@ -316,24 +299,23 @@ require('lazy').setup({
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          -- map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-          -- map('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-          -- map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-          -- map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gi', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
-          -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
-          ---@param method vim.lsp.protocol.Method
-          ---@param bufnr? integer some lsp support methods only in specific files
+          ---@param method string
+          ---@param bufnr? integer
           ---@return boolean
           local function client_supports_method(client, method, bufnr)
             if vim.fn.has 'nvim-0.11' == 1 then
               return client:supports_method(method, bufnr)
             else
-              return client.supports_method(method, { bufnr = bufnr })
+              ---@diagnostic disable-next-line: param-type-mismatch
+              return client:supports_method(method, { bufnr = bufnr })
             end
           end
-
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
           --    See `:help CursorHold` for information about when this is executed
@@ -415,6 +397,7 @@ require('lazy').setup({
         docker_compose_language_service = {},
         ansiblels = {},
         cmake = {},
+        csharp_ls = {},
 
         lua_ls = {
           settings = {
@@ -549,7 +532,23 @@ require('lazy').setup({
     --- @type blink.cmp.Config
     opts = {
       keymap = {
-        preset = 'super-tab',
+        ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+        ['<C-e>'] = { 'hide', 'fallback' },
+        ['<CR>'] = { 'accept', 'fallback' },
+
+        ['<Up>'] = { 'snippet_backward', 'fallback' },
+        ['<Down>'] = { 'snippet_forward', 'fallback' },
+
+        ['<Tab>'] = { 'select_next', 'fallback' },
+        ['<S-Tab>'] = { 'select_prev', 'fallback' },
+
+        ['<C-p>'] = { 'select_prev', 'fallback_to_mappings' },
+        ['<C-n>'] = { 'select_next', 'fallback_to_mappings' },
+
+        ['<C-b>'] = { 'scroll_documentation_up', 'fallback' },
+        ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },
+
+        ['<C-k>'] = { 'show_signature', 'hide_signature', 'fallback' },
       },
 
       appearance = {
